@@ -1,6 +1,6 @@
 import asyncpg
 from typing import Optional
-from config import settings
+from core.config import settings
 
 class DBManagement :
     def __init__(self):
