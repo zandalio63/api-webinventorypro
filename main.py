@@ -1,6 +1,17 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+from db.connnection import DBManagement
+
+db_management = DBManagement()
+
+@asynccontextmanager
+async def lifespan(app : FastAPI):
+    await db_management.connect_to_db()
+    yield
+    await db_management.disconnect_from_db()
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def main():
