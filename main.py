@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from db.connnection import DBManagement
-
-db_management = DBManagement()
+from db.connnection import db_management
 
 @asynccontextmanager
 async def lifespan(app : FastAPI):

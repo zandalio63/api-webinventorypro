@@ -3,17 +3,19 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from .token import verify_token
+from schemas.user_schema import UserOut, UserFilter
+from services.user_service import UserService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
 
 UserType = dict
 
-def get_user_email(email : str) -> Optional[UserType]:
+async def get_user_email(email: str) -> Optional[UserOut]:
     """
     Retorna un usuario a partir del email.
-    Por ahora no implementado, devuelve None.
     """
-    pass
+    users = await UserService.get_users(UserFilter(email=email))
+    return users[0] if users else None
 
 def get_current_user(token = Depends(oauth2_scheme))-> UserType:
     """

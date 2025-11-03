@@ -6,7 +6,7 @@ load_dotenv()
 class Settings(BaseSettings):
     secret_key_jwt : str
     access_token_expire_minutes : int
-    access_token_expires_minutes_refresh : int
+    access_token_expire_minutes_refresh : int
     database_url : str
     
     #allowed_origins : str
