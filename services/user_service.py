@@ -23,7 +23,7 @@ class UserService:
     
     @staticmethod
     async def update_user(user_update: UserUpdate) -> bool:
-        query = "SELECT update_user($1, $2, $3, $4, $5);"
+        query = "SELECT update_user($1::TEXT, $2::TEXT, $3::TEXT, $4::INTEGER, $5::TEXT);"
         params = list(user_update.model_dump().values())
         async with db_management.get_connection() as conn:
             updated = await conn.fetchval(query, *params)
