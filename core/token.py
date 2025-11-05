@@ -2,7 +2,7 @@ from jose import jwt, ExpiredSignatureError, JWTError
 from datetime import datetime, timedelta, timezone
 from typing import Tuple
 
-from config import settings
+from .config import settings
 
 def create_access_token(sub : str) -> Tuple[str, timedelta]:
     """

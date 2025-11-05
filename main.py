@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from db.connnection import db_management
+from api.routers import auth
 
 @asynccontextmanager
 async def lifespan(app : FastAPI):
@@ -10,6 +11,8 @@ async def lifespan(app : FastAPI):
     await db_management.disconnect_from_db()
 
 app = FastAPI(lifespan=lifespan)
+
+app.include_router(auth.router)
 
 @app.get("/")
 async def main():

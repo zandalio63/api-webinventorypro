@@ -26,4 +26,4 @@ class UserOut(UserBase):
     id: int
     password: Optional[str] = None  # normalmente no se retorna
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime]

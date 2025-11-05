@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from .token import verify_token
-from schemas.user_schema import UserOut, UserFilter
+from schemas.user import UserOut, UserFilter
 from services.user_service import UserService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
