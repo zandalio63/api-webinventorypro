@@ -20,9 +20,11 @@ class BaseProduct(BaseModel):
         ge=Decimal("0.00"),
         description="Product price (must be zero or positive)"
     )
+    
+class ProductInsert(BaseProduct):
     user_id: int = Field(..., description="ID of the user who owns the product")
-
-class ProductUpdate(BaseProduct):
+    
+class ProductUpdate(ProductInsert):
     id: int = Field(..., description="Product ID to update")
 
 class ProductDelete(BaseModel):

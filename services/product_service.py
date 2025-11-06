@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from db.connnection import db_management
-from schemas.product import ProductOut, ProductFilter, BaseProduct, ProductUpdate, ProductDelete
+from schemas.product import ProductOut, ProductFilter, ProductUpdate, ProductDelete, ProductInsert
 
 class ProductService:
     @staticmethod
@@ -13,7 +13,7 @@ class ProductService:
             return [ProductOut(**dict(row)) for row in rows]
         
     @staticmethod
-    async def insert_product(product_insert : BaseProduct) -> Optional[int]:
+    async def insert_product(product_insert : ProductInsert) -> Optional[int]:
         query = "SELECT * FROM insert_products($1, $2, $3, $4);"
         params = list(product_insert.model_dump().values())
         async with db_management.get_connection() as conn:
