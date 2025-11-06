@@ -14,7 +14,7 @@ class ProductService:
         
     @staticmethod
     async def insert_product(product_insert : BaseProduct) -> Optional[int]:
-        query = "SELECT * FROM insert_product($1, $2, $3, $4);"
+        query = "SELECT * FROM insert_products($1, $2, $3, $4);"
         params = list(product_insert.model_dump().values())
         async with db_management.get_connection() as conn:
             new_id = await conn.fetchval(query, *params)
@@ -22,7 +22,7 @@ class ProductService:
     
     @staticmethod
     async def update_product(product_update : ProductUpdate) -> bool:
-        query = "SELECT * FROM update_product($1::TEXT, $2::INTEGER, $3::NUMERIC, $4::INTEGER, $5::INTEGER);"
+        query = "SELECT * FROM update_products($1::TEXT, $2::INTEGER, $3::NUMERIC, $4::INTEGER, $5::INTEGER);"
         params = list(product_update.model_dump().values())
         async with db_management.get_connection() as conn:
             updated = await conn.fetchval(query, params)
@@ -30,7 +30,7 @@ class ProductService:
     
     @staticmethod
     async def delete_product(product_delete : ProductDelete) -> bool:
-        query = "SELECT * FROM delete_product($1::INTEGER, $2::INTEGER);"
+        query = "SELECT * FROM delete_products($1::INTEGER, $2::INTEGER);"
         params = list(product_delete.model_dump().values())
         async with db_management.get_connection() as conn:
             deleted = await conn.fetchval(query, params)
