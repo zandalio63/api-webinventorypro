@@ -1,51 +1,42 @@
-from pydantic import BaseModel, EmailStr, model_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator
 from datetime import datetime
 from typing import Optional
 
-# Base común con todos los campos posibles
 class UserBase(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    email: Optional[EmailStr] = None
+    first_name: Optional[str] = Field(None, description="User's first name")
+    last_name: Optional[str] = Field(None, description="User's last name")
+    email: Optional[EmailStr] = Field(None, description="User email address")
 
-# Para insertar un usuario nuevo
 class UserInsert(UserBase):
-    password: str  # requerido solo al crear
+    password: str = Field(..., description="Password required when creating a new user")
 
-# Para actualizar un usuario existente
 class UserUpdate(UserBase):
-    id: int
-    password: Optional[str] = None  # opcional (no siempre se actualiza)
+    id: int = Field(..., description="User ID to update")
+    password: Optional[str] = Field(None, description="Optional password for update")
 
-# Para filtrar (por ID o cualquier otro campo)
 class UserFilter(UserBase):
-    id: Optional[int] = None
+    id: Optional[int] = Field(None, description="User ID filter")
 
-# Para respuesta de lectura
 class UserOut(UserBase):
-    id: int
-    password: Optional[str] = None  # normalmente no se retorna
-    created_at: datetime
-    updated_at: Optional[datetime]
+    id: int = Field(..., description="Unique user identifier")
+    password: Optional[str] = Field(None, description="Normally not returned for security reasons")
+    created_at: datetime = Field(..., description="Timestamp when the user was created")
+    updated_at: Optional[datetime] = Field(None, description="Timestamp when the user was last updated")
 
-# Para actualizar perfil
 class ProfileUpdate(UserBase):
-    password : Optional[str] = None
-    new_password : Optional[str] = None
-    new_confirm_password : Optional[str] = None
-    
+    password: Optional[str] = Field(None, description="Current password (required to change password)")
+    new_password: Optional[str] = Field(None, description="New password")
+    new_confirm_password: Optional[str] = Field(None, description="New password confirmation")
+
     @model_validator(mode='after')
     def check_password_match(self):
-        # Si se quiere cambiar la contraseña
         if self.new_password or self.new_confirm_password:
             if not self.password:
                 raise ValueError("Current password is required to update the password")
-            
+
             if not self.new_password or not self.new_confirm_password:
                 raise ValueError("Both new_password and new_confirm_password must be provided")
-            
+
             if self.new_password != self.new_confirm_password:
                 raise ValueError("New passwords do not match")
-        
-        # Si no se está cambiando la contraseña, no hacer nada
         return self

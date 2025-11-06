@@ -1,23 +1,35 @@
 from typing import Optional
-from pydantic import BaseModel
+from decimal import Decimal
+from pydantic import BaseModel, Field
 from datetime import datetime
 
+class ProductFilter(BaseModel):
+    name: Optional[str] = Field(None, description="Filter by product name")
+    stock: Optional[int] = Field(None, description="Filter by stock quantity")
+    price: Optional[Decimal] = Field(None, description="Filter by product price")
+    user_id: Optional[int] = Field(None, description="Filter by user ID (owner)")
+    id: Optional[int] = Field(None, description="Filter by product ID")
+    created_at: Optional[datetime] = Field(None, description="Filter by creation date (from)")
+    updated_at: Optional[datetime] = Field(None, description="Filter by last update date (from)")
+
 class BaseProduct(BaseModel):
-    name: Optional[str] = None
-    stock: Optional[int] = None
-    user_id: Optional[int] = None
-    id: Optional[int] = None
+    name: str = Field(..., description="Product name")
+    stock: int = Field(0, ge=0, description="Number of items in stock (must be non-negative)")
+    price: Decimal = Field(
+        Decimal("0.00"),
+        ge=Decimal("0.00"),
+        description="Product price (must be zero or positive)"
+    )
+    user_id: int = Field(..., description="ID of the user who owns the product")
 
-class ProductFilter(BaseProduct):
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+class ProductUpdate(BaseProduct):
+    id: int = Field(..., description="Product ID to update")
 
-class ProductInsert(BaseModel):
-    name: str
-    stock: int = 0
-    user_id: int
+class ProductDelete(BaseModel):
+    id: int = Field(..., description="Product ID to delete")
+    user_id: int = Field(..., description="ID of the user who owns the product")
 
-class ProductOut(ProductInsert):
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    id: int
+class ProductOut(BaseProduct):
+    id: int = Field(..., description="Unique product identifier")
+    created_at: datetime = Field(..., description="Timestamp when the product was created")
+    updated_at: Optional[datetime] = Field(None, description="Timestamp when the product was last updated")
