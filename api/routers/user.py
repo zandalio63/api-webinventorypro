@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from schemas.auth import TokenResponse
-from schemas.user import ProfileUpdate, UserUpdate, UserOut
+from schemas.user import ProfileUpdate, UserUpdate, UserOut, UserBase
 from core.dependencies import get_current_user, get_user_email
 from core.token import create_access_token
 from services.user_service import user_service
@@ -51,3 +51,11 @@ async def profile_update(user_data : ProfileUpdate, current_user : UserOut= Depe
         "token_type": "Bearer",
         "expire": int(access_token_expires.total_seconds())
     }
+
+@router.get('/me', response_model=UserBase, status_code=status.HTTP_200_OK)
+async def profile(current_user : UserOut = Depends(get_current_user)):
+    return UserBase(
+        first_name=current_user.first_name,
+        last_name=current_user.last_name,
+        email=current_user.email
+    )
