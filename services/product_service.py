@@ -5,8 +5,8 @@ from schemas.product import ProductOut, ProductFilter, ProductUpdate, ProductDel
 
 class ProductService:
     @staticmethod
-    async def get_products(filters : ProductFilter) -> List[ProductFilter]:
-        query = "SELECT * FROM get_products($1::TEXT, $2::INTEGER, $3::NUMERIC, $4::INTEGER, $5::INTEGER, $6::TIMESTAMPTZ, $7::TIMESTAMPTZ);"
+    async def get_products(filters : ProductFilter) -> List[ProductOut]:
+        query = "SELECT * FROM get_products($1::TEXT, $2::INTEGER, $3::NUMERIC, $4::INTEGER, $5::TIMESTAMPTZ, $6::TIMESTAMPTZ, $7::INTEGER);"
         params = list(filters.model_dump().values())
         async with db_management.get_connection() as conn:
             rows = await conn.fetch(query, *params)
