@@ -15,14 +15,6 @@ class DBManagement :
         if self.pool:
             await self.pool.close()
             print("Conexion a PostgreSQL cerrada")
-
-    async def get_connection(self):
-        """
-        Retorna una conexión del pool. Se usa con 'async with' para cerrarla automáticamente.
-        """
-        if self.pool is None:
-            raise RuntimeError("Pool de conexiones no inicializado")
-        return self.pool.acquire()
     
     @asynccontextmanager
     async def get_connection(self) -> AsyncGenerator[asyncpg.Connection, None] :
