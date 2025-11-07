@@ -11,6 +11,14 @@ class ProductService:
         async with db_management.get_connection() as conn:
             rows = await conn.fetch(query, *params)
             return [ProductOut(**dict(row)) for row in rows]
+    
+    @staticmethod
+    async def get_search_products(filters : ProductFilter) -> List[ProductOut]:
+        query = "SELECT * FROM get_search_products($1::TEXT, $2::INTEGER, $3::NUMERIC, $4::INTEGER, $5::TIMESTAMPTZ, $6::TIMESTAMPTZ, $7::INTEGER);"
+        params = list(filters.model_dump().values())
+        async with db_management.get_connection() as conn:
+            rows = await conn.fetch(query, *params)
+            return [ProductOut(**dict(row)) for row in rows]
         
     @staticmethod
     async def insert_product(product_insert : ProductInsert) -> Optional[int]:
@@ -25,7 +33,7 @@ class ProductService:
         query = "SELECT * FROM update_products($1::TEXT, $2::INTEGER, $3::NUMERIC, $4::INTEGER, $5::INTEGER);"
         params = list(product_update.model_dump().values())
         async with db_management.get_connection() as conn:
-            updated = await conn.fetchval(query, params)
+            updated = await conn.fetchval(query, *params)
             return bool(updated)
     
     @staticmethod
@@ -33,7 +41,7 @@ class ProductService:
         query = "SELECT * FROM delete_products($1::INTEGER, $2::INTEGER);"
         params = list(product_delete.model_dump().values())
         async with db_management.get_connection() as conn:
-            deleted = await conn.fetchval(query, params)
+            deleted = await conn.fetchval(query, *params)
             return bool(deleted)
 
 product_service = ProductService()
