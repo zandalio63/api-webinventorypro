@@ -1,21 +1,66 @@
-from fastapi import FastAPI
+"""
+Aplicación FastAPI principal.
+
+Este módulo inicializa la aplicación FastAPI, define su ciclo de vida y
+registra los routers de los distintos módulos de la API.
+
+Routers incluidos:
+- auth: Gestión de autenticación (login y registro de usuarios).
+- user: Gestión de usuarios y perfil.
+- product: Gestión de productos (CRUD y búsquedas).
+
+Ciclo de vida de la aplicación:
+- Conexión a la base de datos al iniciar la aplicación.
+- Desconexión de la base de datos al cerrar la aplicación.
+
+Endpoint principal:
+- GET / : Retorna un mensaje de prueba.
+"""
+
 from contextlib import asynccontextmanager
+from fastapi import FastAPI
 
 from db.connnection import db_management
 from api.routers import auth, user, product
 
+
 @asynccontextmanager
-async def lifespan(app : FastAPI):
+async def lifespan(_app: FastAPI):
+    """
+    Administra el ciclo de vida de la aplicación.
+
+    - Conecta a la base de datos al iniciar la app.
+    - Desconecta la base de datos al cerrar la app.
+
+    Args:
+        app (FastAPI): Instancia de la aplicación FastAPI.
+
+    Yields:
+        None
+    """
     await db_management.connect_to_db()
     yield
     await db_management.disconnect_from_db()
 
+
+# Inicialización de la aplicación FastAPI
 app = FastAPI(lifespan=lifespan)
 
+
+# Inclusión de routers
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(product.router)
 
+
 @app.get("/")
 async def main():
-    return {"hello" : "World"}
+    """
+    Endpoint principal de prueba.
+
+    Retorna un mensaje simple de bienvenida.
+
+    Returns:
+        dict: Contiene un mensaje de saludo.
+    """
+    return {"hello": "World"}
