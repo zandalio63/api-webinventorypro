@@ -52,6 +52,7 @@ async def lifespan(_app: FastAPI):
 # Inicialización de la aplicación FastAPI
 app = FastAPI(lifespan=lifespan)
 
+# Configuracion cors
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,

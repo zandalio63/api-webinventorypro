@@ -20,6 +20,10 @@ class Settings(BaseSettings):
         secret_key_jwt (str): Clave secreta para firmar los JWT.
         access_token_expire_minutes (int): Minutos de expiración para el token de acceso.
         access_token_expire_minutes_refresh (int): Minutos de expiración para el token de refresco.
+        allowed_origins (str) : Dominiows permitidos al acceder
+        allowed_credentials (str): Manejar envio de tokens, cookies o encabezados en peticiones
+        allowed_methods (str): Metodos permitidos para dominios permitidos
+        allowed_headers (str): headers HTTP que el front puede enviar 
         database_url (str): URL de conexión a la base de datos PostgreSQL.
     """
 
