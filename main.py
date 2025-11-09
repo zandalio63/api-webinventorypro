@@ -18,10 +18,11 @@ Endpoint principal:
 """
 
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
+from api.routers import auth, product, user
 from db.connnection import db_management
-from api.routers import auth, user, product
 
 
 @asynccontextmanager

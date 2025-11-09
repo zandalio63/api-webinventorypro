@@ -6,9 +6,11 @@ eliminación y salida de productos.
 """
 
 from datetime import datetime
-from typing import Optional
 from decimal import Decimal
+from typing import Optional
+
 from pydantic import BaseModel, Field
+
 
 class ProductFilterBase(BaseModel):
     """
@@ -17,6 +19,7 @@ class ProductFilterBase(BaseModel):
     Atributos opcionales para buscar productos por:
         name, stock, price, id, created_at, updated_at
     """
+
     name: Optional[str] = Field(None, description="Filter by product name")
     stock: Optional[int] = Field(None, description="Filter by stock quantity")
     price: Optional[Decimal] = Field(None, description="Filter by product price")
@@ -33,6 +36,7 @@ class ProductFilter(ProductFilterBase):
     """
     Modelo de filtrado extendido que incluye el ID del usuario.
     """
+
     user_id: Optional[int] = Field(None, description="Filter by user ID (owner)")
 
 
@@ -45,12 +49,15 @@ class BaseProduct(BaseModel):
         stock (int): Cantidad en inventario (>= 0).
         price (Decimal): Precio del producto (>= 0.00).
     """
+
     name: str = Field(..., description="Product name")
-    stock: int = Field(0, ge=0, description="Number of items in stock (must be non-negative)")
+    stock: int = Field(
+        0, ge=0, description="Number of items in stock (must be non-negative)"
+    )
     price: Decimal = Field(
         Decimal("0.00"),
         ge=Decimal("0.00"),
-        description="Product price (must be zero or positive)"
+        description="Product price (must be zero or positive)",
     )
 
 
@@ -60,6 +67,7 @@ class ProductInsert(BaseProduct):
 
     Incluye el ID del usuario que lo posee.
     """
+
     user_id: int = Field(..., description="ID of the user who owns the product")
 
 
@@ -69,6 +77,7 @@ class ProductUpdate(ProductInsert):
 
     Incluye el ID único del producto.
     """
+
     id: int = Field(..., description="Unique product identifier")
 
 
@@ -78,6 +87,7 @@ class ProductDelete(BaseModel):
 
     Necesita el ID del producto y el ID del usuario propietario.
     """
+
     id: int = Field(..., description="Product ID to delete")
     user_id: int = Field(..., description="ID of the user who owns the product")
 
@@ -88,8 +98,10 @@ class ProductOut(ProductUpdate):
 
     Incluye información de creación y actualización de timestamps.
     """
-    created_at: datetime = Field(..., description="Timestamp when the product was created")
+
+    created_at: datetime = Field(
+        ..., description="Timestamp when the product was created"
+    )
     updated_at: Optional[datetime] = Field(
-        None,
-        description="Timestamp when the product was last updated"
+        None, description="Timestamp when the product was last updated"
     )

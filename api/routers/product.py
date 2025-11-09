@@ -13,17 +13,17 @@ Cada endpoint requiere autenticación mediante `get_current_user`.
 """
 
 from typing import List
-from fastapi import APIRouter, HTTPException, status, Depends
 
-from schemas.product import (
-    ProductOut, ProductFilter, BaseProduct, ProductInsert,
-    ProductFilterBase, ProductDelete, ProductUpdate
-)
-from schemas.user import UserOut
+from fastapi import APIRouter, Depends, HTTPException, status
+
 from core.dependencies import get_current_user
+from schemas.product import (BaseProduct, ProductDelete, ProductFilter,
+                             ProductFilterBase, ProductInsert, ProductOut,
+                             ProductUpdate)
+from schemas.user import UserOut
 from services.product_service import product_service
 
-router = APIRouter(prefix='/products', tags=["Products"])
+router = APIRouter(prefix="/products", tags=["Products"])
 
 
 @router.get("/", response_model=List[ProductOut], status_code=status.HTTP_200_OK)
@@ -42,8 +42,7 @@ async def get_products(current_user: UserOut = Depends(get_current_user)):
 
 @router.get("/{product_id}", response_model=ProductOut, status_code=status.HTTP_200_OK)
 async def get_product_by_id(
-    product_id: int,
-    current_user: UserOut = Depends(get_current_user)
+    product_id: int, current_user: UserOut = Depends(get_current_user)
 ):
     """
     Retorna un producto por su ID del usuario actual.
@@ -63,8 +62,7 @@ async def get_product_by_id(
     )
     if not products:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
     return products[0]
 
@@ -72,7 +70,7 @@ async def get_product_by_id(
 @router.post("/filter", response_model=List[ProductOut], status_code=status.HTTP_200_OK)
 async def get_search_products(
     product_filters: ProductFilterBase,
-    current_user: UserOut = Depends(get_current_user)
+    current_user: UserOut = Depends(get_current_user),
 ):
     """
     Retorna productos filtrados según los criterios enviados.
@@ -91,8 +89,7 @@ async def get_search_products(
 
 @router.post("/", response_model=ProductOut, status_code=status.HTTP_201_CREATED)
 async def create_product(
-    product_data: BaseProduct,
-    current_user: UserOut = Depends(get_current_user)
+    product_data: BaseProduct, current_user: UserOut = Depends(get_current_user)
 ):
     """
     Crea un nuevo producto para el usuario actual.
@@ -113,29 +110,27 @@ async def create_product(
     )
     if product_exists:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail='Product already exists!!'
+            status_code=status.HTTP_409_CONFLICT, detail="Product already exists!!"
         )
 
     product_add = ProductInsert(
         name=product_data.name,
         stock=product_data.stock,
         price=product_data.price,
-        user_id=current_user.id
+        user_id=current_user.id,
     )
 
     new_id = await product_service.insert_product(product_add)
     if not new_id:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error registering product."
+            detail="Error registering product.",
         )
 
     products = await product_service.get_products(ProductFilter(id=new_id))
     if not products:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
     return products[0]
 
@@ -144,7 +139,7 @@ async def create_product(
 async def update_product(
     product_id: int,
     product_data: BaseProduct,
-    current_user: UserOut = Depends(get_current_user)
+    current_user: UserOut = Depends(get_current_user),
 ):
     """
     Actualiza un producto existente del usuario actual.
@@ -167,8 +162,7 @@ async def update_product(
     )
     if not products:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
         )
 
     if product_data.name != products[0].name:
@@ -179,29 +173,27 @@ async def update_product(
         if product:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Product name already registered."
+                detail="Product name already registered.",
             )
 
     product_update = ProductUpdate(
-        **product_data.model_dump(),
-        id=product_id,
-        user_id=current_user.id
+        **product_data.model_dump(), id=product_id, user_id=current_user.id
     )
 
     updated = await product_service.update_product(product_update)
     if not updated:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error updating product."
+            detail="Error updating product.",
         )
 
-    return {
-        "message": "Product Update"
-    }
+    return {"message": "Product Update"}
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_product(product_id: int, current_user: UserOut = Depends(get_current_user)):
+async def delete_product(
+    product_id: int, current_user: UserOut = Depends(get_current_user)
+):
     """
     Elimina un producto del usuario actual.
 
@@ -230,10 +222,9 @@ async def delete_product(product_id: int, current_user: UserOut = Depends(get_cu
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error deleting product."
+            detail="Error deleting product.",
         )
 
     raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Product not found"
+        status_code=status.HTTP_404_NOT_FOUND, detail="Product not found"
     )

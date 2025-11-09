@@ -11,12 +11,14 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from schemas.user import UserOut, UserFilter
+from schemas.user import UserFilter, UserOut
 from services.user_service import UserService
+
 from .token import verify_token
 
 # Esquema OAuth2 utilizado para obtener el token de acceso (Bearer)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 
 async def get_user_email(email: str) -> Optional[UserOut]:
     """
@@ -31,7 +33,8 @@ async def get_user_email(email: str) -> Optional[UserOut]:
     users = await UserService.get_users(UserFilter(email=email))
     return users[0] if users else None
 
-async def get_current_user(token = Depends(oauth2_scheme))-> UserOut:
+
+async def get_current_user(token=Depends(oauth2_scheme)) -> UserOut:
     """
     Retorna el usuario actual autenticado a partir del token JWT.
 
@@ -47,7 +50,7 @@ async def get_current_user(token = Depends(oauth2_scheme))-> UserOut:
     credendial_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate" : "Bearer"},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
     email = verify_token(token, credendial_exception)

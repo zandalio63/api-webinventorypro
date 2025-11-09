@@ -5,10 +5,10 @@ Provee métodos para CRUD de usuarios utilizando la base de datos
 y los schemas definidos en UserOut, UserFilter, UserInsert, UserUpdate.
 """
 
-from typing import Optional, List
+from typing import List, Optional
 
 from db.connnection import db_management
-from schemas.user import UserOut, UserFilter, UserInsert, UserUpdate
+from schemas.user import UserFilter, UserInsert, UserOut, UserUpdate
 
 
 class UserService:
@@ -27,9 +27,7 @@ class UserService:
         Returns:
             List[UserOut]: Lista de usuarios.
         """
-        query = (
-            "SELECT * FROM get_users($1::TEXT, $2::TEXT, $3::TEXT, $4::INTEGER);"
-        )
+        query = "SELECT * FROM get_users($1::TEXT, $2::TEXT, $3::TEXT, $4::INTEGER);"
         params = list(filters.model_dump().values())
         async with db_management.get_connection() as conn:
             rows = await conn.fetch(query, *params)
@@ -46,9 +44,7 @@ class UserService:
         Returns:
             Optional[int]: ID del nuevo usuario si se creó correctamente.
         """
-        query = (
-            "SELECT * FROM insert_user($1::TEXT, $2::TEXT, $3::TEXT, $4::TEXT);"
-        )
+        query = "SELECT * FROM insert_user($1::TEXT, $2::TEXT, $3::TEXT, $4::TEXT);"
         params = list(user_insert.model_dump().values())
         async with db_management.get_connection() as conn:
             new_id = await conn.fetchval(query, *params)

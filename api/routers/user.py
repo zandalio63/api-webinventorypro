@@ -5,30 +5,25 @@ Este módulo define los endpoints de la API relacionados con el perfil del usuar
 - Consulta de la información del perfil del usuario actual.
 - Actualización de los datos del perfil, incluyendo nombre, apellido, email y contraseña.
 
-Cada endpoint requiere autenticación mediante `get_current_user`. 
+Cada endpoint requiere autenticación mediante `get_current_user`.
 La actualización de contraseña valida la contraseña actual antes de aplicar los cambios.
 """
 
-from fastapi import APIRouter, HTTPException, status, Depends
-from werkzeug.security import generate_password_hash, check_password_hash
+from fastapi import APIRouter, Depends, HTTPException, status
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from schemas.auth import TokenResponse
-from schemas.user import ProfileUpdate, UserUpdate, UserOut, UserBase
 from core.dependencies import get_current_user, get_user_email
 from core.token import create_access_token
+from schemas.auth import TokenResponse
+from schemas.user import ProfileUpdate, UserBase, UserOut, UserUpdate
 from services.user_service import user_service
 
 router = APIRouter(prefix="/profile", tags=["Profile"])
 
 
-@router.put(
-    "/me",
-    response_model=TokenResponse,
-    status_code=status.HTTP_200_OK
-)
+@router.put("/me", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 async def profile_update(
-    user_data: ProfileUpdate,
-    current_user: UserOut = Depends(get_current_user)
+    user_data: ProfileUpdate, current_user: UserOut = Depends(get_current_user)
 ):
     """
     Actualiza la información del perfil del usuario actual.
@@ -54,7 +49,7 @@ async def profile_update(
         if email_exists:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered."
+                detail="Email already registered.",
             )
 
     # Validar actualización de contraseña
@@ -63,7 +58,7 @@ async def profile_update(
         if not check_password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Old password is incorrect!!"
+                detail="Old password is incorrect!!",
             )
         user_data.new_password = generate_password_hash(user_data.new_password)
 
@@ -75,7 +70,7 @@ async def profile_update(
         last_name=user_data.last_name,
         email=email_updated,
         id=current_user.id,
-        password=password_updated
+        password=password_updated,
     )
 
     # Actualizar usuario en base de datos
@@ -83,7 +78,7 @@ async def profile_update(
     if not updated:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error updating user."
+            detail="Error updating user.",
         )
 
     # Generar nuevo token
@@ -92,15 +87,11 @@ async def profile_update(
     return {
         "access_token": access_token,
         "token_type": "Bearer",
-        "expire": int(access_token_expires.total_seconds())
+        "expire": int(access_token_expires.total_seconds()),
     }
 
 
-@router.get(
-    "/me",
-    response_model=UserBase,
-    status_code=status.HTTP_200_OK
-)
+@router.get("/me", response_model=UserBase, status_code=status.HTTP_200_OK)
 async def profile(current_user: UserOut = Depends(get_current_user)):
     """
     Obtiene la información del perfil del usuario actual.
@@ -114,5 +105,5 @@ async def profile(current_user: UserOut = Depends(get_current_user)):
     return UserBase(
         first_name=current_user.first_name,
         last_name=current_user.last_name,
-        email=current_user.email
+        email=current_user.email,
     )

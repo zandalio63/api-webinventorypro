@@ -6,6 +6,7 @@ y la respuesta de tokens JWT.
 """
 
 from typing import Optional
+
 from pydantic import BaseModel, EmailStr, Field, model_validator
 
 
@@ -18,7 +19,10 @@ class TokenResponse(BaseModel):
         token_type (str): Tipo de token (ej. "Bearer").
         expire (int): Tiempo de expiración en segundos o minutos.
     """
-    access_token: str = Field(..., description="Access Token required when response a user")
+
+    access_token: str = Field(
+        ..., description="Access Token required when response a user"
+    )
     token_type: str = Field(..., description="Token Type required when response a user")
     expire: int = Field(..., description="Expire required when response a user")
 
@@ -31,6 +35,7 @@ class LoginAuth(BaseModel):
         email (EmailStr): Correo electrónico del usuario.
         password (str): Contraseña del usuario.
     """
+
     email: EmailStr = Field(..., description="Email required when login user")
     password: str = Field(..., description="Password required when login a new user")
 
@@ -48,11 +53,10 @@ class RegisterAuth(LoginAuth):
     first_name: Optional[str] = Field(None, description="Users' Firstname")
     last_name: Optional[str] = Field(None, description="User's Lastname")
     confirm_password: str = Field(
-        ...,
-        description="Confirm Password required when creating a new user"
+        ..., description="Confirm Password required when creating a new user"
     )
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def check_password_match(self) -> "RegisterAuth":
         """
         Valida que `password` y `confirm_password` sean iguales.

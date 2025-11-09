@@ -5,10 +5,11 @@ Provee métodos para CRUD y búsquedas de productos utilizando la base de datos
 y los schemas definidos en ProductOut, ProductFilter, ProductUpdate, ProductDelete, ProductInsert.
 """
 
-from typing import Optional, List
+from typing import List, Optional
 
 from db.connnection import db_management
-from schemas.product import ProductOut, ProductFilter, ProductUpdate, ProductDelete, ProductInsert
+from schemas.product import (ProductDelete, ProductFilter, ProductInsert,
+                             ProductOut, ProductUpdate)
 
 
 class ProductService:

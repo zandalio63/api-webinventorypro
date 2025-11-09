@@ -7,11 +7,12 @@ de manera segura mediante un context manager.
 """
 
 from contextlib import asynccontextmanager
-from typing import Optional, AsyncGenerator
+from typing import AsyncGenerator, Optional
 
 import asyncpg
 
 from core.config import settings
+
 
 class DBManagement:
     """Gestor asincrónico de conexiones a PostgreSQL."""

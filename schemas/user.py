@@ -18,6 +18,7 @@ class UserBase(BaseModel):
     Incluye información opcional común para varios usos:
         first_name, last_name, email
     """
+
     first_name: Optional[str] = Field(None, description="User's first name")
     last_name: Optional[str] = Field(None, description="User's last name")
     email: Optional[EmailStr] = Field(None, description="User email address")
@@ -29,6 +30,7 @@ class UserInsert(UserBase):
 
     Incluye el password requerido para creación.
     """
+
     password: str = Field(..., description="Password required when creating a new user")
 
 
@@ -38,6 +40,7 @@ class UserUpdate(UserBase):
 
     Incluye ID obligatorio y password opcional para cambios.
     """
+
     id: int = Field(..., description="User ID to update")
     password: Optional[str] = Field(None, description="Optional password for update")
 
@@ -48,6 +51,7 @@ class UserFilter(UserBase):
 
     Permite filtrar por ID además de los campos base.
     """
+
     id: Optional[int] = Field(None, description="User ID filter")
 
 
@@ -57,6 +61,7 @@ class UserOut(UserBase):
 
     Incluye información de identificación y timestamps.
     """
+
     id: int = Field(..., description="Unique user identifier")
     password: Optional[str] = Field(
         None, description="Normally not returned for security reasons"
@@ -73,13 +78,16 @@ class ProfileUpdate(UserBase):
 
     Permite cambiar la contraseña si se proporciona la actual.
     """
+
     password: Optional[str] = Field(
         None, description="Current password (required to change password)"
     )
     new_password: Optional[str] = Field(None, description="New password")
-    new_confirm_password: Optional[str] = Field(None, description="New password confirmation")
+    new_confirm_password: Optional[str] = Field(
+        None, description="New password confirmation"
+    )
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def check_password_match(self) -> "ProfileUpdate":
         """
         Valida que la nueva contraseña coincida y que se proporcione la actual.
@@ -91,7 +99,9 @@ class ProfileUpdate(UserBase):
             if not self.password:
                 raise ValueError("Current password is required to update the password")
             if not self.new_password or not self.new_confirm_password:
-                raise ValueError("Both new_password and new_confirm_password must be provided")
+                raise ValueError(
+                    "Both new_password and new_confirm_password must be provided"
+                )
             if self.new_password != self.new_confirm_password:
                 raise ValueError("New passwords do not match")
         return self
