@@ -32,3 +32,6 @@ jobs:
       run: |
         pip install pip-audit
         pip-audit --ignore-vuln GHSA-wj6h-64fc-37mp
+    
+    - name: Build Docker
+      run: docker build -t fastapi-container:ci .
