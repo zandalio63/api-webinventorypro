@@ -7,4 +7,4 @@ WebInventoryPro is a web application developed using Django, designed for small 
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-%23000?style=social&logo=github)](https://github.com/sbtn63/WebInvetoryPro)
 
 ## FastAPI Migration Backend
-[![deploy](https://img.shields.io/badge/Deploy-%230082CE.svg?logo=google-chrome&logoColor=white)](https://api-webinventorypro.onrender.com)
+[![deploy](https://img.shields.io/badge/Deploy-%230082CE.svg?logo=google-chrome&logoColor=white)](https://api-webinventorypro.onrender.com/docs)
