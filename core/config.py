@@ -28,10 +28,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes_refresh: int
     database_url: str
 
-    # allowed_origins : str
-    # allowed_credentials : str
-    # allowed_methods : str
-    # allowed_headers : str
+    allowed_origins : str
+    allowed_credentials : str
+    allowed_methods : str
+    allowed_headers : str
 
     class Config:
         """
