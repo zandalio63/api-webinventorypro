@@ -23,6 +23,11 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install -r requirements.txt
     
+    - name: Lint with Flake8
+      run: |
+        pip install flake8
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
     - name: Check dependencies security
       run: |
         pip install pip-audit
