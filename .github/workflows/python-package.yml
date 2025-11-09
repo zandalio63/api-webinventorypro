@@ -28,17 +28,17 @@ jobs:
         pip install flake8
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
+    - name: Check dependencies security
+      run: |
+        pip install pip-audit
+        pip-audit --ignore-vuln GHSA-wj6h-64fc-37mp
+    
   docker-setup:
     runs-on: ubuntu-latest
     needs: python-setup
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Check dependencies security
-      run: |
-        pip install pip-audit
-        pip-audit --ignore-vuln GHSA-wj6h-64fc-37mp
     
     - name: Build Docker
       run: docker build -t fastapi-container:ci .
